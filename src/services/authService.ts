@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { STORAGE_BUCKETS } from '@/constants';
 import { compressImage } from '@/utils/compressImage';
@@ -33,6 +34,10 @@ export async function signUp(email: string, password: string) {
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
+
+  if (Platform.OS === 'web') {
+    window.location.href = '/';
+  }
 }
 
 export async function getSession() {
