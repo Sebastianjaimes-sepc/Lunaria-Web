@@ -193,12 +193,13 @@ export default function CulturaListScreen() {
 
   useEffect(() => {
     if (!session?.user?.id) return;
+    if (registros.length > 0) return; // Ya cargados por useAuth
     setLoading(true);
     getCulturaRegistros(session.user.id)
       .then(setRegistros)
       .catch(() => Alert.alert('Error', 'No se pudieron cargar los registros.'))
       .finally(() => setLoading(false));
-  }, [session?.user?.id, setLoading, setRegistros]);
+  }, [session?.user?.id, setLoading, setRegistros, registros.length]);
 
   const handleOpenEdit = useCallback((r: CulturaRegistro) => {
     setEditando(r);

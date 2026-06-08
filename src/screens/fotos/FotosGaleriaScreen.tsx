@@ -168,15 +168,16 @@ export default function FotosGaleriaScreen() {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Cargar fotos al montar
+  // Cargar fotos al montar (solo si no hay datos ya cargados por useAuth)
   useEffect(() => {
     if (!session?.user?.id) return;
+    if (fotos.length > 0) return;
     setLoading(true);
     getFotos(session.user.id)
       .then(setFotos)
       .catch(() => Alert.alert('Error', 'No se pudieron cargar las fotos.'))
       .finally(() => setLoading(false));
-  }, [session?.user?.id, setLoading, setFotos]);
+  }, [session?.user?.id, setLoading, setFotos, fotos.length]);
 
   // Resolver URLs firmadas
   useEffect(() => {

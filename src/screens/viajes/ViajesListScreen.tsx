@@ -121,9 +121,10 @@ export default function ViajesListScreen() {
 
   useEffect(() => {
     if (!session?.user?.id) return;
+    if (viajes.length > 0) return; // Ya cargados por useAuth
     setLoading(true);
     getViajes(session.user.id).then(setViajes).catch(() => Alert.alert('Error', 'No se pudieron cargar los viajes.')).finally(() => setLoading(false));
-  }, [session?.user?.id, setLoading, setViajes]);
+  }, [session?.user?.id, setLoading, setViajes, viajes.length]);
 
   const handleSave = useCallback(async (input: CreateViajeInput) => {
     if (!session?.user?.id) return;
