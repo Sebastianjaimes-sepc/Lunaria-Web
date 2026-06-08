@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Lunaria",
+    "slug": "lunaria",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF8F4"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.lunaria.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAF8F4"
+      },
+      "package": "com.lunaria.app",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Lunaria necesita acceso a tu galería para guardar recuerdos.",
+          "cameraPermission": "Lunaria necesita acceso a tu cámara para capturar recuerdos."
+        }
+      ]
+    ],
+    "scheme": "lunaria",
+    "extra": {
+      "supabaseUrl": "https://keioeatgjszjklibekru.supabase.co",
+      "supabaseAnonKey": "sb_publishable_YICFrCCT9pHo6GjE72g3-g_Abaf77GO",
+      "eas": {
+        "projectId": "a61c620c-191c-4b3c-99df-5bcb046409ec"
+      }
+    }
+  }
+}

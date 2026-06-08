@@ -1,0 +1,45 @@
+import { create } from 'zustand/index.js';
+import type { Session, User } from '@supabase/supabase-js';
+import type { Profile } from '@/types/models';
+
+interface AuthState {
+  // ── Estado ───────────────────────────────────────────────
+  session: Session | null;
+  user: User | null;
+  profile: Profile | null;
+  isLoading: boolean;
+  isInitialized: boolean;
+
+  // ── Acciones ─────────────────────────────────────────────
+  setSession: (session: Session | null) => void;
+  setProfile: (profile: Profile | null) => void;
+  setLoading: (loading: boolean) => void;
+  setInitialized: (initialized: boolean) => void;
+  reset: () => void;
+}
+
+const initialState = {
+  session: null,
+  user: null,
+  profile: null,
+  isLoading: false,
+  isInitialized: false,
+};
+
+export const useAuthStore = create<AuthState>((set) => ({
+  ...initialState,
+
+  setSession: (session) =>
+    set({
+      session,
+      user: session?.user ?? null,
+    }),
+
+  setProfile: (profile) => set({ profile }),
+
+  setLoading: (isLoading) => set({ isLoading }),
+
+  setInitialized: (isInitialized) => set({ isInitialized }),
+
+  reset: () => set(initialState),
+}));
