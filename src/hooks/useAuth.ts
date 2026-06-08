@@ -25,7 +25,13 @@ export function useAuth() {
   useEffect(() => {
     setLoading(true);
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 5000));
+
+    Promise.race([
+      supabase.auth.getSession(),
+      timeoutPromise
+    ]).then((result: any) => {
+      const session = result?.data?.session ?? null;
       setSession(session);
       setInitialized(true);
       setLoading(false);
@@ -48,6 +54,9 @@ export function useAuth() {
           }
         }, 0);
       }
+    }).catch(() => {
+      setInitialized(true);
+      setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
