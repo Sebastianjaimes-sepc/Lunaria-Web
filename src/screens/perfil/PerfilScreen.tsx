@@ -270,7 +270,12 @@ const handleSignOut = useCallback(async () => {
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <TouchableOpacity
             style={styles.signOutRow}
-            onPress={handleSignOut} disabled={isSigningOut} activeOpacity={0.7}
+            onPress={() => {
+    console.log('click cerrar sesion', isSigningOut);
+    handleSignOut();
+  }}
+  disabled={false}
+  activeOpacity={0.7}
           >
             {isSigningOut
               ? <ActivityIndicator size="small" color={colors.error} />
