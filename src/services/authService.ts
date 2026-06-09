@@ -36,6 +36,7 @@ export async function signOut() {
   if (error) throw error;
 
   if (Platform.OS === 'web') {
+    try { localStorage.clear(); } catch {}
     window.location.href = '/';
   }
 }
