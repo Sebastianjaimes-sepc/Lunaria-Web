@@ -10,11 +10,6 @@ import { getViajes } from '@/services/viajesService';
 import { getFotos } from '@/services/fotosService';
 import { useLumiStore } from '@/store/useLumiStore';
 
-/**
- * Inicializa la sesión y pre-carga todos los datos al arrancar.
- * Así el Home muestra contadores reales sin que Luisa tenga que
- * abrir cada tab primero.
- */
 export function useAuth() {
   const { setSession, setProfile, setLoading, setInitialized } = useAuthStore();
   const setRegistros = useCulturaStore((s) => s.setRegistros);
@@ -23,36 +18,18 @@ export function useAuth() {
   const resetLumi = useLumiStore((s) => s.reset);
 
   useEffect(() => {
-    setLoading(true);
-
-    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 5000));
-
-    Promise.race([
-      supabase.auth.getSession(),
-      timeoutPromise
-    ]).then((result: any) => {
-      const session = result?.data?.session ?? null;
+    // Mostrar app inmediatamente sin bloquear
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setInitialized(true);
       setLoading(false);
 
+      // Cargar datos en background sin bloquear la UI
       if (session?.user) {
-        setTimeout(async () => {
-          try {
-            const [profile, registros, viajes, fotos] = await Promise.all([
-              getProfile(session.user.id),
-              getCulturaRegistros(session.user.id),
-              getViajes(session.user.id),
-              getFotos(session.user.id),
-            ]);
-            setProfile(profile);
-            setRegistros(registros);
-            setViajes(viajes);
-            setFotos(fotos);
-          } catch {
-            setProfile(null);
-          }
-        }, 0);
+        getProfile(session.user.id).then(setProfile).catch(() => {});
+        getCulturaRegistros(session.user.id).then(setRegistros).catch(() => {});
+        getViajes(session.user.id).then(setViajes).catch(() => {});
+        getFotos(session.user.id).then(setFotos).catch(() => {});
       }
     }).catch(() => {
       setInitialized(true);
@@ -64,23 +41,10 @@ export function useAuth() {
         setSession(session);
 
         if (event === 'SIGNED_IN' && session?.user) {
-          setLoading(true);
-          try {
-            const [profile, registros, viajes, fotos] = await Promise.all([
-              getProfile(session.user.id),
-              getCulturaRegistros(session.user.id),
-              getViajes(session.user.id),
-              getFotos(session.user.id),
-            ]);
-            setProfile(profile);
-            setRegistros(registros);
-            setViajes(viajes);
-            setFotos(fotos);
-          } catch {
-            setProfile(null);
-          } finally {
-            setLoading(false);
-          }
+          getProfile(session.user.id).then(setProfile).catch(() => {});
+          getCulturaRegistros(session.user.id).then(setRegistros).catch(() => {});
+          getViajes(session.user.id).then(setViajes).catch(() => {});
+          getFotos(session.user.id).then(setFotos).catch(() => {});
         }
 
         if (event === 'SIGNED_OUT') {
