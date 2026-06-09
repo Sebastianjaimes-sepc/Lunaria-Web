@@ -138,8 +138,6 @@ export default function PerfilScreen() {
 
 const { setSession } = useAuthStore();
 
-const { setSession } = useAuthStore();
-
 const handleSignOut = useCallback(async () => {
   const confirmed = Platform.OS === 'web'
     ? window.confirm('¿Segura que quieres cerrar sesión?')
