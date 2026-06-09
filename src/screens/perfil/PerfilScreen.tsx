@@ -142,33 +142,20 @@ const handleSignOut = useCallback(async () => {
   if (Platform.OS === 'web') {
     setIsSigningOut(true);
     try {
+      console.log('1. iniciando signOut');
       await supabase.auth.signOut();
+      console.log('2. signOut completado');
       try { localStorage.clear(); } catch {}
+      console.log('3. localStorage limpio');
       setSession(null);
-    } catch {
-      Alert.alert('Error', 'No pudimos cerrar la sesión.');
+      console.log('4. session limpia');
+    } catch (e) {
+      console.log('ERROR:', e);
       setIsSigningOut(false);
     }
     return;
   }
-
-  Alert.alert('Cerrar sesión', '¿Segura que quieres salir?', [
-    { text: 'Cancelar', style: 'cancel' },
-    {
-      text: 'Salir',
-      style: 'destructive',
-      onPress: async () => {
-        setIsSigningOut(true);
-        try {
-          await supabase.auth.signOut();
-          setSession(null);
-        } catch {
-          Alert.alert('Error', 'No pudimos cerrar la sesión.');
-          setIsSigningOut(false);
-        }
-      },
-    },
-  ]);
+  // ... resto del código
 }, [setSession]);
 
   const peliculasVistas = registros.filter((r) => r.tipo === 'pelicula' || r.tipo === 'serie').length;
