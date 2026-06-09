@@ -139,28 +139,36 @@ export default function PerfilScreen() {
 const { setSession } = useAuthStore();
 
 const handleSignOut = useCallback(async () => {
-  const confirmed = Platform.OS === 'web'
-    ? window.confirm('¿Segura que quieres cerrar sesión?')
-    : await new Promise<boolean>((resolve) => {
-        Alert.alert('Cerrar sesión', '¿Segura que quieres salir?', [
-          { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
-          { text: 'Salir', style: 'destructive', onPress: () => resolve(true) },
-        ]);
-      });
-
-  if (!confirmed) return;
-
-  setIsSigningOut(true);
-  try {
-    await supabase.auth.signOut();
-    if (Platform.OS === 'web') {
+  if (Platform.OS === 'web') {
+    setIsSigningOut(true);
+    try {
+      await supabase.auth.signOut();
       try { localStorage.clear(); } catch {}
+      setSession(null);
+    } catch {
+      Alert.alert('Error', 'No pudimos cerrar la sesión.');
+      setIsSigningOut(false);
     }
-    setSession(null);
-  } catch {
-    Alert.alert('Error', 'No pudimos cerrar la sesión.');
-    setIsSigningOut(false);
+    return;
   }
+
+  Alert.alert('Cerrar sesión', '¿Segura que quieres salir?', [
+    { text: 'Cancelar', style: 'cancel' },
+    {
+      text: 'Salir',
+      style: 'destructive',
+      onPress: async () => {
+        setIsSigningOut(true);
+        try {
+          await supabase.auth.signOut();
+          setSession(null);
+        } catch {
+          Alert.alert('Error', 'No pudimos cerrar la sesión.');
+          setIsSigningOut(false);
+        }
+      },
+    },
+  ]);
 }, [setSession]);
 
   const peliculasVistas = registros.filter((r) => r.tipo === 'pelicula' || r.tipo === 'serie').length;
