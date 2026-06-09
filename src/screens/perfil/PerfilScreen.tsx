@@ -1,3 +1,5 @@
+import { supabase } from '@/lib/supabase';
+
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, ScrollView, TextInput, TouchableOpacity,
@@ -134,16 +136,30 @@ export default function PerfilScreen() {
     }
   }, [session, nombre, ciudad, profile, setProfile]);
 
-  const handleSignOut = useCallback(() => {
-    Alert.alert('Cerrar sesión', '¿Segura que quieres salir?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Salir', style: 'destructive', onPress: async () => {
+const { setSession } = useAuthStore();
+
+const handleSignOut = useCallback(() => {
+  Alert.alert('Cerrar sesión', '¿Segura que quieres salir?', [
+    { text: 'Cancelar', style: 'cancel' },
+    {
+      text: 'Salir',
+      style: 'destructive',
+      onPress: async () => {
         setIsSigningOut(true);
-        try { await signOut(); }
-        catch { Alert.alert('Error', 'No pudimos cerrar la sesión.'); setIsSigningOut(false); }
-      }},
-    ]);
-  }, []);
+        try {
+          await supabase.auth.signOut();
+          if (Platform.OS === 'web') {
+            try { localStorage.clear(); } catch {}
+          }
+          setSession(null);
+        } catch {
+          Alert.alert('Error', 'No pudimos cerrar la sesión.');
+          setIsSigningOut(false);
+        }
+      },
+    },
+  ]);
+}, [setSession]);
 
   const peliculasVistas = registros.filter((r) => r.tipo === 'pelicula' || r.tipo === 'serie').length;
   const librosLeidos = registros.filter((r) => r.tipo === 'libro').length;
